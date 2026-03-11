@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Callable, Awaitable
 import logging
 
 from .routers import post, user, auth, vote
@@ -22,9 +23,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ----- Request Logging Middleware -----
 @app.middleware("http")
-async def log_requests(request: Request, call_next):
+async def log_requests(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
     logger.info(f"Incoming request: {request.method} {request.url}")
     try:
         response = await call_next(request)
