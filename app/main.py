@@ -7,8 +7,6 @@ import logging
 from .routers import post, user, auth, vote
 
 
-# models.Base.metadata.create_all(bind=engine)
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -41,7 +39,7 @@ async def log_requests(request: Request, call_next: Callable[[Request], Awaitabl
 
 @app.get("/", status_code=status.HTTP_200_OK)
 def root():
-    return {"message": "Hello FastAPI World"}
+    return {"message": "Hello, Welcome to TripleA-Dev World!"} 
 
 
 app.include_router(post.router)
