@@ -10,7 +10,7 @@ from .routers import post, user, auth, vote
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
+app = FastAPI(title="TripleA-Dev Social Media Backend", description="A simple social media API built with FastAPI", version="1.0.0")
 
 origins = ["*"]
 app.add_middleware(
@@ -37,9 +37,9 @@ async def log_requests(request: Request, call_next: Callable[[Request], Awaitabl
         )
 
 
-@app.get("/", status_code=status.HTTP_200_OK)
-def root():
-    return {"message": "Hello, Welcome to TripleA-Dev World!"} 
+@app.get("/", status_code=status.HTTP_200_OK, tags=["Root"])
+def Root():
+    return {"message": "Hello, Welcome to TripleA-Dev World! Bind Works!"} 
 
 
 app.include_router(post.router)
