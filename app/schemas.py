@@ -48,6 +48,7 @@ class PostOut(BaseModel):
     
     model_config = ConfigDict(from_attributes=True)
     
+    
 class Vote(BaseModel):
     post_id: int
     dir: Literal[0, 1]
