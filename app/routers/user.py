@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.database import get_db
-from ..import schemas, models, utils
+from ..import schemas, models, utils, oauth
 
 router = APIRouter(
     prefix="/users",
@@ -11,7 +10,7 @@ router = APIRouter(
 
 
 @router.get("/", status_code=status.HTTP_200_OK, response_model=list[schemas.User])
-def get_users(db: Session = Depends(get_db)):
+def get_users(db: Session = Depends(get_db), current_user: models.User = Depends(oauth.get_current_user)):
     users = db.query(models.User).all()
     return users    
 
@@ -28,7 +27,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 @router.get("/{id}", status_code=status.HTTP_200_OK, response_model=schemas.User)
-def get_user(id: int, db: Session = Depends(get_db)):
+def get_user(id: int, db: Session = Depends(get_db), current_user: models.User = Depends(oauth.get_current_user)):
     user = db.query(models.User).filter(models.User.id == id).first()
 
     if not user:
@@ -40,7 +39,7 @@ def get_user(id: int, db: Session = Depends(get_db)):
     return user 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(id: int, db: Session = Depends(get_db)):
+def delete_user(id: int, db: Session = Depends(get_db), current_user: models.User = Depends(oauth.get_current_user)):
     user_query = db.query(models.User).filter(models.User.id == id)
     user = user_query.first()
 
@@ -56,7 +55,7 @@ def delete_user(id: int, db: Session = Depends(get_db)):
     return Response(status_code=status.HTTP_204_NO_CONTENT) 
 
 @router.put("/{id}", status_code=status.HTTP_200_OK, response_model=schemas.User)
-def update_user(id: int, user: schemas.UserCreate, db: Session = Depends(get_db)):
+def update_user(id: int, user: schemas.UserCreate, db: Session = Depends(get_db), current_user: models.User = Depends(oauth.get_current_user)):
     hashed_password = utils.hash(user.password)
     user.password = hashed_password
     
