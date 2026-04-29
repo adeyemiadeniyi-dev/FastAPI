@@ -3,17 +3,16 @@ name: Build and Deploy
 on: [push, pull_request]
 
 jobs:
-  job1:
-    test:
-      runs-on: ubuntu-latest
-      enivironment:
-        name: tripleA-dev SM backend
-      env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        ALGORITHM: ${{ secrets.ALGORITHM }}
-        ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
+  test:
+    runs-on: ubuntu-latest
+    environment:
+      name: tripleA-dev SM backend
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      ALGORITHM: ${{ secrets.ALGORITHM }}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
     steps:
       - name: pulling github repository
         uses: actions/checkout@v4
@@ -32,4 +31,19 @@ jobs:
       - name: test with pytest
         run: pytest
 
-  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: tripleA-dev SM backend
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      ALGORITHM: ${{ secrets.ALGORITHM }}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
+    steps:
+      - name: pulling github repository
+        uses: actions/checkout@v4
+
+      # Add your deploy steps here (e.g. SSH, Docker, cloud CLI)
