@@ -82,11 +82,16 @@ jobs:
     needs: [docker]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: deploy to render
-        uses: sws2apps/render-deployment@main
+      - name: deploy to EC2
+        uses: appleboy/ssh-action@v1
         with:
-          serviceId: ${{ secrets.RENDER_SERVICE_ID }}
-          apiKey: ${{ secrets.RENDER_API_KEY }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/app/src/FastAPI
+            git pull origin main
+            source venv/bin/activate
+            pip install -r requirements.txt
+            alembic upgrade head
+            sudo systemctl restart api.service
