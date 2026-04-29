@@ -8,14 +8,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app import models
 from typing import List, Dict
-import os
 import pytest
 
 
 
-DATABASE_URL = os.getenv("TEST_DATABASE_URL", settings.test_database_url)
-
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(settings.test_database_url, echo=True)
 
 TestingSessionLocal = sessionmaker(
     bind=engine,
