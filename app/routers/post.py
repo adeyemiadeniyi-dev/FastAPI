@@ -53,7 +53,7 @@ def delete_post(
             detail=f"Post with id {id} not found"
         )
 
-    if post.id != current_user.id:
+    if post.owner_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to delete this post"
@@ -80,7 +80,7 @@ def update_post(
             detail=f"Post with id {id} not found"
         )
 
-    if existing_post.id != current_user.id:
+    if existing_post.owner_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to update this post"
