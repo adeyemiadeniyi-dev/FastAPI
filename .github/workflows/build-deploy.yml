@@ -90,7 +90,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/app/src/FastAPI
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/main
             source venv/bin/activate
             pip install -r requirements.txt
             alembic upgrade head
